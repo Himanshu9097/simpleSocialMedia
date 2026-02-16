@@ -1,0 +1,128 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,
+html,
+#root{
+  height: 100%;
+  width: 100%;
+}
+
+.create-post-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80vh;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.create-post-section h1 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Form layout */
+.create-post-section form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+  padding: 30px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Input styling */
+.create-post-section input[type="text"],
+.create-post-section input[type="file"] {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.create-post-section input[type="text"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Submit button styling */
+.create-post-section button {
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-post-section button:hover {
+  background-color: #0056b3;
+}
+
+.create-post-section button:active {
+  transform: scale(0.98);
+}
+
+/* Container for the entire feed */
+.feed-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* Individual post card */
+.post-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden; /* Ensures the image respects the border radius */
+  transition: transform 0.2s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Image styling */
+.post-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  max-height: 450px;
+}
+
+/* Caption styling */
+.post-caption {
+  padding: 15px 20px;
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+  font-family: sans-serif;
+  line-height: 1.5;
+}
+
+/* Empty state styling */
+.no-posts {
+  color: #888;
+  font-family: sans-serif;
+  margin-top: 50px;
+}
