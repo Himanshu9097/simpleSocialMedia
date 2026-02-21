@@ -1,0 +1,50 @@
+.create-post-form {
+  overflow: hidden;
+}
+
+.image-upload-area {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 1px solid var(--glass-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  position: relative;
+}
+
+.image-upload-area:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.upload-placeholder {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.caption-input-container {
+  padding: 1.5rem 1.5rem 1rem;
+}
+
+.caption-input {
+  resize: none;
+  border-color: transparent;
+  background: rgba(255, 255, 255, 0.02);
+  font-size: 1rem;
+}
+
+.caption-input:focus {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--glass-border);
+}

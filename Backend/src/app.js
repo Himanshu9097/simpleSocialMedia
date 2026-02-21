@@ -1,49 +1,19 @@
 const express = require('express');
-const multer = require('multer');
-const uploadFile = require('./services/storage.service');
-const postModel = require('./models/post.model')
-const cors = require("cors")
+const cors = require('cors');
 
-
+const userRoutes = require('./routes/user.routes');
+const postRoutes = require('./routes/post.routes');
+const messageRoutes = require('./routes/message.routes');
+const storyRoutes = require('./routes/story.routes');
 
 const app = express();
-app.use(cors())
+
+app.use(cors());
 app.use(express.json());
 
-const upload = multer({storage: multer.memoryStorage()})
+app.use('/api/users', userRoutes);
+app.use('/api/posts', postRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/stories', storyRoutes);
 
-
-
-app.post('/create-post', upload.single("image"), async(req , res) => {
-    console.log(req.body);
-    console.log(req.file)
-
-    const result = await uploadFile(req.file.buffer);
-
-    const post = await postModel.create({
-        image : result.url,
-        caption : req.body.caption
-    })
-
-    return res.status(201).json({
-        message : "Post created successfully",
-        post
-    })
-
-})
-
-app.get('/posts', async (req , res) => {
-    const posts = await postModel.find();
-
-    return res.status(200).json({
-        message : "Post fetched Successfully",
-        posts
-    })
-})
-
-
-
-
-
-
-module.exports = app
+module.exports = app;
