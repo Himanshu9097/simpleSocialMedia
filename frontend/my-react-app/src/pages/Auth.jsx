@@ -18,8 +18,8 @@ const Auth = () => {
         setError('');
 
         const url = isLogin
-            ? 'http://localhost:3000/api/users/login'
-            : 'http://localhost:3000/api/users/register';
+            ? 'https://simplesocialbackend.onrender.com/api/users/login'
+            : 'https://simplesocialbackend.onrender.com/api/users/register';
 
         try {
             const { data } = await axios.post(url, formData);

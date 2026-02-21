@@ -16,7 +16,7 @@ const PostCard = ({ post }) => {
     const handleLike = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.put(`http://localhost:3000/api/posts/like/${post._id}`, {}, {
+            const { data } = await axios.put(`https://simplesocialbackend.onrender.com/api/posts/like/${post._id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setLikesCount(data.likes);
@@ -29,7 +29,7 @@ const PostCard = ({ post }) => {
     const handleSave = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post(`http://localhost:3000/api/posts/save/${post._id}`, {}, {
+            const { data } = await axios.post(`https://simplesocialbackend.onrender.com/api/posts/save/${post._id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setHasSaved(data.isSaved);
@@ -54,7 +54,7 @@ const PostCard = ({ post }) => {
 
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post(`http://localhost:3000/api/posts/comment/${post._id}`, { text: commentText }, {
+            const { data } = await axios.post(`https://simplesocialbackend.onrender.com/api/posts/comment/${post._id}`, { text: commentText }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setComments([...comments, data.comment]);

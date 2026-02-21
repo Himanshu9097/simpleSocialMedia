@@ -20,7 +20,7 @@ const Search = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const { data } = await axios.get(`http://localhost:3000/api/users/search?query=${query}`, {
+                const { data } = await axios.get(`https://simplesocialbackend.onrender.com/api/users/search?query=${query}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setResults(data.users);

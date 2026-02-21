@@ -33,7 +33,7 @@ const Profile = () => {
                 const token = localStorage.getItem('token');
 
                 // Fetch profile
-                const { data } = await axios.get(`http://localhost:3000/api/users/profile/${username}`, {
+                const { data } = await axios.get(`https://simplesocialbackend.onrender.com/api/users/profile/${username}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -50,14 +50,14 @@ const Profile = () => {
                 setIsMutual(isFollowing && isFollowedBy);
 
                 // Fetch posts
-                const postsRes = await axios.get(`http://localhost:3000/api/posts/user/${username}`, {
+                const postsRes = await axios.get(`https://simplesocialbackend.onrender.com/api/posts/user/${username}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUserPosts(postsRes.data.posts);
 
                 // Fetch stories
                 try {
-                    const storiesRes = await axios.get(`http://localhost:3000/api/stories/user/${username}`, {
+                    const storiesRes = await axios.get(`https://simplesocialbackend.onrender.com/api/stories/user/${username}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setUserStories(storiesRes.data.stories);
@@ -68,7 +68,7 @@ const Profile = () => {
                 // Fetch saved posts for own profile
                 if (data.user._id === currentUser.id) {
                     try {
-                        const savedRes = await axios.get(`http://localhost:3000/api/posts/saved/me`, {
+                        const savedRes = await axios.get(`https://simplesocialbackend.onrender.com/api/posts/saved/me`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         setUserSavedPosts(savedRes.data.savedPosts);
@@ -97,7 +97,7 @@ const Profile = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post('http://localhost:3000/api/users/profile-picture', formData, {
+            const { data } = await axios.post('https://simplesocialbackend.onrender.com/api/users/profile-picture', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
@@ -125,7 +125,7 @@ const Profile = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post('http://localhost:3000/api/stories/create', formData, {
+            const { data } = await axios.post('https://simplesocialbackend.onrender.com/api/stories/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
@@ -142,7 +142,7 @@ const Profile = () => {
     const handleToggleFollow = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post(`http://localhost:3000/api/users/follow/${userProfile._id}`, {}, {
+            const { data } = await axios.post(`https://simplesocialbackend.onrender.com/api/users/follow/${userProfile._id}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -156,7 +156,7 @@ const Profile = () => {
     const handleAcceptRequest = async (requesterId) => {
         try {
             const token = localStorage.getItem('token');
-            await axios.post(`http://localhost:3000/api/users/accept-request/${requesterId}`, {}, {
+            await axios.post(`https://simplesocialbackend.onrender.com/api/users/accept-request/${requesterId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Remove from list
@@ -173,7 +173,7 @@ const Profile = () => {
     const handleRejectRequest = async (requesterId) => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post(`http://localhost:3000/api/users/reject-request/${requesterId}`, {}, {
+            const { data } = await axios.post(`https://simplesocialbackend.onrender.com/api/users/reject-request/${requesterId}`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Remove from list
@@ -190,7 +190,7 @@ const Profile = () => {
         if (!window.confirm("Delete this story?")) return;
         try {
             const token = localStorage.getItem('token');
-            await axios.delete(`http://localhost:3000/api/stories/${storyId}`, {
+            await axios.delete(`https://simplesocialbackend.onrender.com/api/stories/${storyId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setUserStories(prev => prev.filter(s => s._id !== storyId));
