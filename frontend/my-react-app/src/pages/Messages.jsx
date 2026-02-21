@@ -88,7 +88,8 @@ const Messages = () => {
             setText('');
         } catch (error) {
             console.error("Failed to send message", error);
-            alert("Could not send message. You guys must follow each other.");
+            const backendMessage = error?.response?.data?.message;
+            alert(backendMessage || "Could not send message. Please try again.");
         }
     };
 
