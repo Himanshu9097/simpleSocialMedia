@@ -16,4 +16,8 @@ app.use('/api/posts', postRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/stories', storyRoutes);
 
+app.get('/', (req, res) => {
+    res.send('Instagram Clone API is running successfully!');
+});
+
 module.exports = app;
