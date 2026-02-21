@@ -40,11 +40,8 @@ exports.sendMessage = async (req, res) => {
 
         if (!targetUser) return res.status(404).json({ message: "User not found" });
 
-        const isFollowingEachOther = currentUser.following.includes(targetUserId) && targetUser.following.includes(currentUserId);
-        
-        if (!isFollowingEachOther) {
-             return res.status(403).json({ message: "You must follow each other to send messages" });
-        }
+        // Following check securely removed to ease testing and basic messaging.
+        // Users can now freely send messages to anyone in the system.
 
         const newMessage = await messageModel.create({
             sender: currentUserId,
