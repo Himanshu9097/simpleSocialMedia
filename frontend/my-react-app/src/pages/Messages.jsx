@@ -18,7 +18,7 @@ const Messages = () => {
         const fetchConnections = async () => {
             try {
                 const token = localStorage.getItem('token');
-                const { data } = await axios.get('https://simplesocialbackend.onrender.com/api/users/connections/all', {
+                const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/connections/all`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setConnections(data.connections);
@@ -45,7 +45,7 @@ const Messages = () => {
     const fetchMessages = async () => {
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.get(`https://simplesocialbackend.onrender.com/api/messages/${activeChat._id}`, {
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/messages/${activeChat._id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setMessages(data.messages);
@@ -60,7 +60,7 @@ const Messages = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const { data } = await axios.post(`https://simplesocialbackend.onrender.com/api/messages/send/${activeChat._id}`,
+            const { data } = await axios.post(`${import.meta.env.VITE_API_URL}/api/messages/send/${activeChat._id}`,
                 { text },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

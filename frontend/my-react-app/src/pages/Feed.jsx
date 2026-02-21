@@ -14,8 +14,8 @@ const Feed = () => {
     try {
       const token = localStorage.getItem('token');
       const [postsRes, storiesRes] = await Promise.all([
-        axios.get('https://simplesocialbackend.onrender.com/api/posts/feed', { headers: { Authorization: `Bearer ${token}` } }),
-        axios.get('https://simplesocialbackend.onrender.com/api/stories/feed', { headers: { Authorization: `Bearer ${token}` } })
+        axios.get(`${import.meta.env.VITE_API_URL}/api/posts/feed`, { headers: { Authorization: `Bearer ${token}` } }),
+        axios.get(`${import.meta.env.VITE_API_URL}/api/stories/feed`, { headers: { Authorization: `Bearer ${token}` } })
       ]);
       setPosts(postsRes.data.posts);
 

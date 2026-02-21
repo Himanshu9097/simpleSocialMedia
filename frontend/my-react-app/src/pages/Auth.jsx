@@ -18,8 +18,8 @@ const Auth = () => {
         setError('');
 
         const url = isLogin
-            ? 'https://simplesocialbackend.onrender.com/api/users/login'
-            : 'https://simplesocialbackend.onrender.com/api/users/register';
+            ? `${import.meta.env.VITE_API_URL}/api/users/login`
+            : `${import.meta.env.VITE_API_URL}/api/users/register`;
 
         try {
             const { data } = await axios.post(url, formData);
