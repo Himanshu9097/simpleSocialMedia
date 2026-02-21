@@ -199,7 +199,11 @@ const Profile = () => {
         }
     };
 
-    if (loading) return <div className="text-muted text-center mt-10">Loading profile...</div>;
+    if (loading) return (
+        <div className="loader-container">
+            <div className="spinner"></div>
+        </div>
+    );
 
     const isOwnProfile = currentUser.username === username;
 

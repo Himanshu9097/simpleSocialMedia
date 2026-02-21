@@ -125,10 +125,13 @@ const Messages = () => {
 
                             <div className="chat-history">
                                 {messages.map(msg => (
-                                    <div key={msg._id} className={`chat-bubble-wrapper ${msg.sender === currentUser.id ? 'sent' : 'received'}`}>
+                                    <div key={msg._id} className={`chat-bubble-wrapper ${msg.sender === currentUser.id ? 'sent' : 'received'}`} style={{ display: 'flex', flexDirection: 'column', alignItems: msg.sender === currentUser.id ? 'flex-end' : 'flex-start' }}>
                                         <div className="chat-bubble">
                                             {msg.text}
                                         </div>
+                                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '4px', margin: '0 8px' }}>
+                                            {new Date(msg.createdAt || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                        </span>
                                     </div>
                                 ))}
                                 <div ref={messagesEndRef} />

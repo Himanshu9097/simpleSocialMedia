@@ -44,8 +44,8 @@ const Feed = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center mt-10">
-        <div className="text-muted">Loading feed...</div>
+      <div className="loader-container">
+        <div className="spinner"></div>
       </div>
     );
   }
