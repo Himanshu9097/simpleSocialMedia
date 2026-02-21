@@ -110,4 +110,15 @@
     padding: 1rem;
     border-radius: var(--radius-full);
   }
+
+  .notif-dropdown {
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 80px !important;
+    top: auto !important;
+    width: 90vw !important;
+    margin: 0 auto !important;
+    box-shadow: 0 -8px 32px 0 rgba(0, 0, 0, 0.5) !important;
+  }
 }

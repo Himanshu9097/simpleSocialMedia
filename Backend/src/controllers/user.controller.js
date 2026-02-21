@@ -1,6 +1,8 @@
 const userModel = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Notification = require('../models/notification.model');
+const { getReceiverSocketId, getIo } = require('../socket');
 
 exports.register = async (req, res) => {
     try {
@@ -128,6 +130,18 @@ exports.toggleFollow = async (req, res) => {
             // Send Follow request (or follow instantly if user is not private, actually we'll make it always request to match the prompt "send follow request then my friend accept it")
             targetUser.followRequests.push(currentUserId);
             await targetUser.save();
+
+            const notification = await Notification.create({
+                recipient: targetUserId,
+                sender: currentUserId,
+                type: 'follow'
+            });
+            const populatedNotif = await notification.populate('sender', 'username profilePic');
+            const receiverSocketId = getReceiverSocketId(targetUserId.toString());
+            if (receiverSocketId) {
+                getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
+            }
+
             return res.status(200).json({ message: "Follow request sent", status: "requested" });
         }
     } catch (error) {

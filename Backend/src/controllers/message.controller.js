@@ -1,5 +1,7 @@
 const messageModel = require('../models/message.model');
 const userModel = require('../models/user.model');
+const Notification = require('../models/notification.model');
+const { getReceiverSocketId, getIo } = require('../socket');
 
 exports.getConversation = async (req, res) => {
     try {
@@ -49,6 +51,24 @@ exports.sendMessage = async (req, res) => {
             receiver: targetUserId,
             text
         });
+
+        // Real-time socket event
+        const receiverSocketId = getReceiverSocketId(targetUserId);
+        if (receiverSocketId) {
+            getIo().to(receiverSocketId).emit('newMessage', newMessage);
+        }
+
+        // Notification logic (usually you don't send individual notifs for every text, but just as requested in prompt)
+        const notification = await Notification.create({
+            recipient: targetUserId,
+            sender: currentUserId,
+            type: 'message',
+            message: text.substring(0, 30) // short snippet
+        });
+        if (receiverSocketId) {
+            const populatedNotif = await notification.populate('sender', 'username profilePic');
+            getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
+        }
 
         return res.status(201).json({
             message: "Message sent",

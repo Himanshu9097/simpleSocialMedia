@@ -3,6 +3,7 @@ import axios from 'axios';
 import './Messages.css';
 import { Send } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useSocket } from '../SocketContext';
 
 const Messages = () => {
     const navigate = useNavigate();
@@ -38,9 +39,22 @@ const Messages = () => {
         }
     }, [activeChat]);
 
+    const { socket } = useSocket();
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("newMessage", (message) => {
+                if (activeChat && (message.sender === activeChat._id || message.receiver === activeChat._id)) {
+                    setMessages(prev => [...prev, message]);
+                }
+            });
+        }
+        return () => socket?.off("newMessage");
+    }, [socket, activeChat]);
 
     const fetchMessages = async () => {
         try {

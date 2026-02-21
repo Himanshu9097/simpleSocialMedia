@@ -7,13 +7,14 @@ import CreatePost from './pages/CreatePost';
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import Search from './pages/Search';
+import { SocketProvider } from './SocketContext';
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   if (!token) {
     return <Navigate to="/auth" replace />;
   }
-  return children;
+  return <SocketProvider>{children}</SocketProvider>;
 };
 
 const PublicRoute = ({ children }) => {

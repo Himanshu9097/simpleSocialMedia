@@ -1,5 +1,7 @@
 const postModel = require('../models/post.model');
 const uploadFile = require('../services/storage.service');
+const Notification = require('../models/notification.model');
+const { getReceiverSocketId, getIo } = require('../socket');
 
 exports.createPost = async (req, res) => {
     try {
@@ -61,6 +63,19 @@ exports.toggleLike = async (req, res) => {
         } else {
              // Like
              post.likes.push(userId);
+             if (post.author.toString() !== userId) {
+                 const notification = await Notification.create({
+                     recipient: post.author,
+                     sender: userId,
+                     type: 'like',
+                     post: postId
+                 });
+                 const populatedNotif = await notification.populate('sender', 'username profilePic');
+                 const receiverSocketId = getReceiverSocketId(post.author.toString());
+                 if (receiverSocketId) {
+                     getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
+                 }
+             }
         }
 
         await post.save();
@@ -100,6 +115,21 @@ exports.addComment = async (req, res) => {
 
         await post.populate('comments.user', 'username profilePic');
         const populatedComment = post.comments[post.comments.length - 1];
+
+        if (post.author.toString() !== userId) {
+            const notification = await Notification.create({
+                recipient: post.author,
+                sender: userId,
+                type: 'comment',
+                post: postId,
+                message: text.substring(0, 30)
+            });
+            const populatedNotif = await notification.populate('sender', 'username profilePic');
+            const receiverSocketId = getReceiverSocketId(post.author.toString());
+            if (receiverSocketId) {
+                getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
+            }
+        }
 
         return res.status(201).json({
             message: "Comment added successfully",
