@@ -5,7 +5,7 @@ import { useSocket } from '../SocketContext';
 import './Navbar.css';
 
 const Navbar = () => {
-    const { notifications, unreadCount, markAsRead } = useSocket();
+    const { notifications, unreadCount, markAsRead, unreadMessagesFrom } = useSocket();
     const [showNotifs, setShowNotifs] = useState(false);
 
     const handleLogout = () => {
@@ -46,9 +46,14 @@ const Navbar = () => {
                         <span className="nav-label">Create</span>
                     </NavLink>
                 </li>
-                <li>
+                <li style={{ position: 'relative' }}>
                     <NavLink to="/messages" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
-                        <MessageSquare size={24} />
+                        <div style={{ position: 'relative' }}>
+                            <MessageSquare size={24} />
+                            {unreadMessagesFrom.size > 0 && (
+                                <span style={{ position: 'absolute', top: -5, right: -5, background: 'red', color: 'white', borderRadius: '50%', width: '10px', height: '10px' }} />
+                            )}
+                        </div>
                         <span className="nav-label">Messages</span>
                     </NavLink>
                 </li>

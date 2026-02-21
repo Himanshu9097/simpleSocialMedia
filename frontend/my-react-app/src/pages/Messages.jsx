@@ -39,7 +39,13 @@ const Messages = () => {
         }
     }, [activeChat]);
 
-    const { socket } = useSocket();
+    const { socket, unreadMessagesFrom, clearUnreadMessageFrom } = useSocket();
+
+    useEffect(() => {
+        if (activeChat) {
+            clearUnreadMessageFrom(activeChat._id);
+        }
+    }, [activeChat]);
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -101,6 +107,7 @@ const Messages = () => {
                                     key={user._id}
                                     className={`connection-item ${activeChat?._id === user._id ? 'active' : ''}`}
                                     onClick={() => setActiveChat(user)}
+                                    style={{ position: 'relative' }}
                                 >
                                     <div className="connection-avatar">
                                         {user.profilePic ? (
@@ -110,6 +117,9 @@ const Messages = () => {
                                         )}
                                     </div>
                                     <span style={{ fontWeight: 600 }}>{user.username}</span>
+                                    {unreadMessagesFrom.has(user._id) && (
+                                        <span style={{ position: 'absolute', right: '1rem', background: 'var(--accent-color)', width: '10px', height: '10px', borderRadius: '50%' }} />
+                                    )}
                                 </li>
                             ))
                         )}
