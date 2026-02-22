@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, PlusSquare, User, LogOut, MessageSquare, Search as SearchIcon, Heart } from 'lucide-react';
+import { Home, PlusSquare, User, LogOut, MessageSquare, Search as SearchIcon, Heart, Compass } from 'lucide-react';
 import { useSocket } from '../SocketContext';
 import './Navbar.css';
 
@@ -38,6 +38,12 @@ const Navbar = () => {
                     <NavLink to="/search" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
                         <SearchIcon size={24} />
                         <span className="nav-label">Search</span>
+                    </NavLink>
+                </li>
+                <li>
+                    <NavLink to="/explore" className={({ isActive }) => isActive ? "nav-item active" : "nav-item"}>
+                        <Compass size={24} />
+                        <span className="nav-label">Explore</span>
                     </NavLink>
                 </li>
                 <li>

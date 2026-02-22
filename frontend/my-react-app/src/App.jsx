@@ -7,6 +7,7 @@ import CreatePost from './pages/CreatePost';
 import Messages from './pages/Messages';
 import Profile from './pages/Profile';
 import Search from './pages/Search';
+import Explore from './pages/Explore';
 import { SocketProvider } from './SocketContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -49,6 +50,7 @@ function App() {
         >
           <Route index element={<Navigate to="/feed" replace />} />
           <Route path="feed" element={<Feed />} />
+          <Route path="explore" element={<Explore />} />
           <Route path="search" element={<Search />} />
           <Route path="create-post" element={<CreatePost />} />
           <Route path="messages" element={<Messages />} />
