@@ -254,7 +254,7 @@ const Profile = () => {
                                 {followStatus === 'Following' && (
                                     <button
                                         className="btn-secondary"
-                                        onClick={() => navigate('/messages')}
+                                        onClick={() => navigate('/messages', { state: { directUser: userProfile } })}
                                         style={{ padding: '0.5rem 1.5rem' }}
                                     >
                                         Message

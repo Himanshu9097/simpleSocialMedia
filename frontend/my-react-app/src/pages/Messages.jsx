@@ -1,16 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './Messages.css';
-import { Send } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Send, Plus, X, Search } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSocket } from '../SocketContext';
 
 const Messages = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [connections, setConnections] = useState([]);
     const [activeChat, setActiveChat] = useState(null);
     const [messages, setMessages] = useState([]);
     const [text, setText] = useState('');
+    const [showNewChatModal, setShowNewChatModal] = useState(false);
+    const [searchResults, setSearchResults] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const messagesEndRef = useRef(null);
 
     const currentUser = JSON.parse(localStorage.getItem('user'));
@@ -22,7 +26,21 @@ const Messages = () => {
                 const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/connections/all`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setConnections(data.connections);
+                const fetched = data.connections || [];
+
+                // Deep-link check
+                const directUser = location.state?.directUser;
+                if (directUser) {
+                    setActiveChat(directUser);
+                    // Add them to connection list if they aren't already there
+                    if (!fetched.some(u => u._id === directUser._id)) {
+                        fetched.unshift(directUser);
+                    }
+                    // clear the state so refreshes don't auto-open it unless re-navigated
+                    window.history.replaceState({}, document.title);
+                }
+
+                setConnections(fetched);
             } catch (error) {
                 console.error("Failed to load connections", error);
             }
@@ -90,12 +108,47 @@ const Messages = () => {
         }
     };
 
+    const handleSearchUsers = async (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
+        if (!query.trim()) {
+            setSearchResults([]);
+            return;
+        }
+        try {
+            const token = localStorage.getItem('token');
+            const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/users/search?query=${query}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            // Filter out self
+            const filtered = data.users.filter(u => u._id !== currentUser.id);
+            setSearchResults(filtered);
+        } catch (error) {
+            console.error("Search failed", error);
+        }
+    };
+
+    const startNewChat = (user) => {
+        setActiveChat(user);
+        setShowNewChatModal(false);
+        setSearchQuery('');
+        setSearchResults([]);
+        if (!connections.some(u => u._id === user._id)) {
+            setConnections(prev => [user, ...prev]);
+        }
+    };
+
     return (
         <div className="messages-container animate-fade-in">
             <div className="glass-panel messages-layout">
                 {/* Sidebar */}
                 <div className="messages-sidebar">
-                    <h2 className="heading-2" style={{ padding: '1.5rem', borderBottom: '1px solid var(--glass-border)' }}>Messages</h2>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem', borderBottom: '1px solid var(--glass-border)' }}>
+                        <h2 className="heading-2" style={{ margin: 0 }}>Messages</h2>
+                        <button className="btn-secondary" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem' }} onClick={() => setShowNewChatModal(true)}>
+                            <Plus size={16} /> New Check
+                        </button>
+                    </div>
                     <ul className="connection-list">
                         {connections.length === 0 ? (
                             <li className="p-4 text-muted text-center" style={{ padding: '1rem' }}>No connections yet.</li>
@@ -182,6 +235,51 @@ const Messages = () => {
                     )}
                 </div>
             </div>
+
+            {/* New Chat Modal */}
+            {showNewChatModal && (
+                <div className="story-viewer-modal animate-fade-in" style={{
+                    position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1000,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.8)'
+                }}>
+                    <div className="glass-panel" style={{ width: '90%', maxWidth: '450px', maxHeight: '70vh', display: 'flex', flexDirection: 'column', borderRadius: 'var(--radius-lg)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '1.5rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                            <h3 className="heading-2">New Message</h3>
+                            <X size={24} style={{ cursor: 'pointer' }} onClick={() => setShowNewChatModal(false)} />
+                        </div>
+                        <div style={{ padding: '1rem', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
+                            <div style={{ position: 'relative' }}>
+                                <Search size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
+                                <input
+                                    type="text"
+                                    placeholder="Search people..."
+                                    value={searchQuery}
+                                    onChange={handleSearchUsers}
+                                    style={{ width: '100%', padding: '0.8rem 1rem 0.8rem 2.5rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white' }}
+                                />
+                            </div>
+                        </div>
+                        <div style={{ overflowY: 'auto', padding: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem', flex: 1 }}>
+                            {searchQuery && searchResults.length === 0 ? (
+                                <p className="text-muted text-center">No users found.</p>
+                            ) : (
+                                searchResults.map(u => (
+                                    <div key={u._id} style={{ display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', padding: '0.5rem', borderRadius: 'var(--radius-md)', transition: 'background 0.2s' }} className="hover-highlight" onClick={() => startNewChat(u)}>
+                                        <div className="connection-avatar" style={{ width: '40px', height: '40px', border: '1px solid var(--glass-border)' }}>
+                                            {u.profilePic ? (
+                                                <img src={u.profilePic} alt={u.username} style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} />
+                                            ) : (
+                                                <div className="avatar-placeholder">{u.username?.[0]?.toUpperCase()}</div>
+                                            )}
+                                        </div>
+                                        <span style={{ fontWeight: 600 }}>{u.username}</span>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

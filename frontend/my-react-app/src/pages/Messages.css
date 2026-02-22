@@ -1,6 +1,11 @@
 .messages-container {
   height: calc(100vh - 4rem); /* accounting for main padding */
+  box-sizing: border-box;
   display: flex;
+}
+
+.hover-highlight:hover {
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .messages-layout {
