@@ -12,6 +12,15 @@ const PostCard = ({ post }) => {
     const [comments, setComments] = useState(post.comments || []);
     const [commentText, setCommentText] = useState('');
     const [showComments, setShowComments] = useState(false);
+    const [showHeart, setShowHeart] = useState(false);
+
+    const handleDoubleTap = () => {
+        setShowHeart(true);
+        setTimeout(() => setShowHeart(false), 1000);
+        if (!hasLiked) {
+            handleLike();
+        }
+    };
 
     const handleLike = async () => {
         try {
@@ -77,8 +86,13 @@ const PostCard = ({ post }) => {
                 <div className="post-author">{post.author?.username || 'Unknown User'}</div>
             </div>
 
-            <div className="post-image-container">
-                <img src={post.image} alt="Post content" className="post-image" onDoubleClick={handleLike} />
+            <div className="post-image-container" style={{ position: 'relative' }}>
+                <img src={post.image} alt="Post content" className="post-image" onDoubleClick={handleDoubleTap} style={{ cursor: 'pointer' }} />
+                {showHeart && (
+                    <div className="floating-heart animate">
+                        <Heart size={100} fill="white" color="white" />
+                    </div>
+                )}
             </div>
 
             <div className="post-actions" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
