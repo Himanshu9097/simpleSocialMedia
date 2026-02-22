@@ -10,6 +10,9 @@ const postSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    hashtags: [{
+        type: String
+    }],
     author: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'user',

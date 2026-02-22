@@ -11,9 +11,14 @@ exports.createPost = async (req, res) => {
 
         const result = await uploadFile(req.file.buffer);
 
+        const caption = req.body.caption || "";
+        const hashtags = caption.match(/#[a-zA-Z0-9_]+/g) || [];
+        const cleanedHashtags = hashtags.map(tag => tag.slice(1).toLowerCase());
+
         const post = await postModel.create({
             image: result.url,
-            caption: req.body.caption || "",
+            caption: caption,
+            hashtags: cleanedHashtags,
             author: req.user.id
         });
 
@@ -204,6 +209,40 @@ exports.getSavedPosts = async (req, res) => {
         if (!user) return res.status(404).json({ message: "User not found" });
 
         return res.status(200).json({ savedPosts: user.savedPosts });
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+exports.getExploreFeed = async (req, res) => {
+    try {
+        const posts = await postModel.find()
+            .populate('author', 'username profilePic')
+            .populate('comments.user', 'username profilePic');
+            
+        // Sort in memory by likes length for simplicity, then by date
+        posts.sort((a, b) => {
+            if (b.likes.length === a.likes.length) {
+                return b.createdAt - a.createdAt;
+            }
+            return b.likes.length - a.likes.length;
+        });
+
+        return res.status(200).json({ posts: posts.slice(0, 30) }); // Return top 30
+    } catch (error) {
+        return res.status(500).json({ message: "Server error", error: error.message });
+    }
+};
+
+exports.searchByHashtag = async (req, res) => {
+    try {
+        const { tag } = req.params;
+        const posts = await postModel.find({ hashtags: tag.toLowerCase() })
+            .sort({ createdAt: -1 })
+            .populate('author', 'username profilePic')
+            .populate('comments.user', 'username profilePic');
+
+        return res.status(200).json({ posts });
     } catch (error) {
         return res.status(500).json({ message: "Server error", error: error.message });
     }
