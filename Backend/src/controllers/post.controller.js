@@ -67,7 +67,9 @@ exports.toggleLike = async (req, res) => {
              post.likes = post.likes.filter(id => id.toString() !== userId);
         } else {
              // Like
-             post.likes.push(userId);
+             if (!post.likes.some(id => id.toString() === userId)) {
+                 post.likes.push(userId);
+             }
              if (post.author.toString() !== userId) {
                  const notification = await Notification.create({
                      recipient: post.author,
