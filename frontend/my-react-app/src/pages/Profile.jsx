@@ -147,6 +147,7 @@ const Profile = () => {
             });
 
             if (data.status === 'requested') setFollowStatus('Requested');
+            else if (data.status === 'following') setFollowStatus('Following');
             else if (data.status === 'not_following') setFollowStatus('Follow');
         } catch (error) {
             console.error("Follow error", error);

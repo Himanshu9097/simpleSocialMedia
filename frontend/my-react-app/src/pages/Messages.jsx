@@ -33,9 +33,6 @@ const Messages = () => {
     useEffect(() => {
         if (activeChat) {
             fetchMessages();
-            // Optional: Set an interval for polling or implement WebSockets later
-            const interval = setInterval(fetchMessages, 3000);
-            return () => clearInterval(interval);
         }
     }, [activeChat]);
 

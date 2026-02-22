@@ -121,14 +121,11 @@ exports.toggleFollow = async (req, res) => {
             await currentUser.save();
             await targetUser.save();
             return res.status(200).json({ message: "Unfollowed successfully", status: "not_following" });
-        } else if (hasRequested) {
-            // Cancel request
-            targetUser.followRequests = targetUser.followRequests.filter(id => id.toString() !== currentUserId);
-            await targetUser.save();
-            return res.status(200).json({ message: "Follow request canceled", status: "not_following" });
         } else {
-            // Send Follow request (or follow instantly if user is not private, actually we'll make it always request to match the prompt "send follow request then my friend accept it")
-            targetUser.followRequests.push(currentUserId);
+            // Instant Follow (Bypassing requests for public profiles)
+            currentUser.following.push(targetUserId);
+            targetUser.followers.push(currentUserId);
+            await currentUser.save();
             await targetUser.save();
 
             const notification = await Notification.create({
@@ -142,7 +139,7 @@ exports.toggleFollow = async (req, res) => {
                 getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
             }
 
-            return res.status(200).json({ message: "Follow request sent", status: "requested" });
+            return res.status(200).json({ message: "Followed successfully", status: "following" });
         }
     } catch (error) {
         return res.status(500).json({ message: "Internal server error", error: error.message });
