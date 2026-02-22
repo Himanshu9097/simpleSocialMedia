@@ -13,6 +13,14 @@ const PostCard = ({ post }) => {
     const [commentText, setCommentText] = useState('');
     const [showComments, setShowComments] = useState(false);
     const [showHeart, setShowHeart] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    const handleCopyLink = () => {
+        const link = `${window.location.origin}/profile/${post.author?.username}`;
+        navigator.clipboard.writeText(link);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     const handleDoubleTap = () => {
         setShowHeart(true);
@@ -103,8 +111,8 @@ const PostCard = ({ post }) => {
                     <button className="action-btn" onClick={() => setShowComments(!showComments)}>
                         <MessageCircle size={28} />
                     </button>
-                    <button className="action-btn">
-                        <Send size={28} />
+                    <button className="action-btn" onClick={handleCopyLink} title="Copy Link">
+                        {copied ? <span style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--accent-color)' }}>Copied!</span> : <Send size={28} />}
                     </button>
                 </div>
                 <button className="action-btn" onClick={handleSave}>

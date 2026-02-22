@@ -111,8 +111,8 @@ exports.toggleFollow = async (req, res) => {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const isFollowing = currentUser.following.includes(targetUserId);
-        const hasRequested = targetUser.followRequests.includes(currentUserId);
+        const isFollowing = currentUser.following.some(id => id.toString() === targetUserId);
+        const hasRequested = targetUser.followRequests.some(id => id.toString() === currentUserId);
 
         if (isFollowing) {
             // Unfollow
@@ -123,8 +123,15 @@ exports.toggleFollow = async (req, res) => {
             return res.status(200).json({ message: "Unfollowed successfully", status: "not_following" });
         } else {
             // Instant Follow (Bypassing requests for public profiles)
-            currentUser.following.push(targetUserId);
-            targetUser.followers.push(currentUserId);
+            if (!currentUser.following.some(id => id.toString() === targetUserId)) {
+                currentUser.following.push(targetUserId);
+            }
+            if (!targetUser.followers.some(id => id.toString() === currentUserId)) {
+                targetUser.followers.push(currentUserId);
+            }
+            // Clear request if they were stuck
+            targetUser.followRequests = targetUser.followRequests.filter(id => id.toString() !== currentUserId);
+
             await currentUser.save();
             await targetUser.save();
 
