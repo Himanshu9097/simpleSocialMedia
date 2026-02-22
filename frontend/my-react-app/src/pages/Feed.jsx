@@ -38,8 +38,6 @@ const Feed = () => {
 
   useEffect(() => {
     fetchFeedData();
-    const interval = setInterval(fetchFeedData, 10000); // 10s auto-refresh for feed
-    return () => clearInterval(interval);
   }, []);
 
   if (loading) {

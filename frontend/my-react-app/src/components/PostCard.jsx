@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { Heart, MessageCircle, Bookmark, Send } from 'lucide-react';
 import axios from 'axios';
 import './PostCard.css';
@@ -155,4 +155,4 @@ const PostCard = ({ post }) => {
     );
 };
 
-export default PostCard;
+export default memo(PostCard);

@@ -33,8 +33,12 @@ const postSchema = new mongoose.Schema({
             default: Date.now
         }
     }]
-}, { timestamps: true })
+}, { timestamps: true });
 
-const postModel = mongoose.model("post", postSchema)
+postSchema.index({ author: 1, createdAt: -1 });
+postSchema.index({ hashtags: 1 });
+postSchema.index({ createdAt: -1 });
+
+const postModel = mongoose.model("post", postSchema);
 
 module.exports = postModel;
