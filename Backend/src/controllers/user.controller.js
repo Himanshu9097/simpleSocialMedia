@@ -1,4 +1,5 @@
 const userModel = require('../models/user.model');
+const messageModel = require('../models/message.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const Notification = require('../models/notification.model');
@@ -223,9 +224,30 @@ exports.getConnections = async (req, res) => {
         
         if (!user) return res.status(404).json({ message: "User not found" });
 
-        // Connections are users who follow you AND you follow them back
+        // 1. Get Connections (mutual followers)
         const followingIds = user.following.map(f => f._id.toString());
-        const connections = user.followers.filter(f => followingIds.includes(f._id.toString()));
+        let connections = user.followers.filter(f => followingIds.includes(f._id.toString()));
+
+        // 2. Get Users from Message History
+        const messages = await messageModel.find({
+            $or: [{ sender: userId }, { receiver: userId }]
+        }).select('sender receiver -_id');
+
+        const interactedUserIds = new Set();
+        messages.forEach(msg => {
+            if (msg.sender.toString() !== userId) interactedUserIds.add(msg.sender.toString());
+            if (msg.receiver.toString() !== userId) interactedUserIds.add(msg.receiver.toString());
+        });
+
+        // Remove users already in connections
+        connections.forEach(c => interactedUserIds.delete(c._id.toString()));
+
+        // Fetch those extra users
+        if (interactedUserIds.size > 0) {
+            const extraUsers = await userModel.find({ _id: { $in: Array.from(interactedUserIds) } })
+                                            .select('username profilePic');
+            connections = [...connections, ...extraUsers];
+        }
 
         return res.status(200).json({ connections });
     } catch (error) {
