@@ -251,7 +251,7 @@ const Profile = () => {
                                 >
                                     {followStatus}
                                 </button>
-                                {isMutual && (
+                                {followStatus === 'Following' && (
                                     <button
                                         className="btn-secondary"
                                         onClick={() => navigate('/messages')}
