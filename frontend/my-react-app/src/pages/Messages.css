@@ -161,8 +161,19 @@
   .messages-sidebar {
     width: 80px;
   }
-  .messages-sidebar .heading-2, .messages-sidebar span {
-    display: none;
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .sidebar-header {
+    justify-content: center !important;
+    padding: 1.5rem 0 !important;
+  }
+  .new-chat-btn {
+    padding: 0 !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 50% !important;
+    justify-content: center !important;
   }
   .connection-item {
     padding: 1rem;

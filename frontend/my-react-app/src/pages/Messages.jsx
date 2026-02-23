@@ -143,10 +143,10 @@ const Messages = () => {
             <div className="glass-panel messages-layout">
                 {/* Sidebar */}
                 <div className="messages-sidebar">
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem', borderBottom: '1px solid var(--glass-border)' }}>
-                        <h2 className="heading-2" style={{ margin: 0 }}>Messages</h2>
-                        <button className="btn-secondary" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem' }} onClick={() => setShowNewChatModal(true)}>
-                            <Plus size={16} /> New Check
+                    <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '1.5rem', borderBottom: '1px solid var(--glass-border)' }}>
+                        <h2 className="heading-2 hide-on-mobile" style={{ margin: 0 }}>Messages</h2>
+                        <button className="btn-secondary new-chat-btn" style={{ padding: '0.4rem 0.8rem', display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.9rem' }} onClick={() => setShowNewChatModal(true)}>
+                            <Plus size={16} /> <span className="hide-on-mobile">New Chat</span>
                         </button>
                     </div>
                     <ul className="connection-list">
@@ -167,7 +167,7 @@ const Messages = () => {
                                             <div className="avatar-placeholder">{user.username?.[0]?.toUpperCase()}</div>
                                         )}
                                     </div>
-                                    <span style={{ fontWeight: 600 }}>{user.username}</span>
+                                    <span className="hide-on-mobile" style={{ fontWeight: 600 }}>{user.username}</span>
                                     {unreadMessagesFrom.has(user._id) && (
                                         <span style={{ position: 'absolute', right: '1rem', background: 'var(--accent-color)', width: '10px', height: '10px', borderRadius: '50%' }} />
                                     )}
