@@ -14,7 +14,7 @@ exports.getConversation = async (req, res) => {
                 { sender: currentUserId, receiver: targetUserId },
                 { sender: targetUserId, receiver: currentUserId }
             ]
-        }).sort({ createdAt: 1 });
+        }).sort({ createdAt: 1 }).lean();
 
         return res.status(200).json({
             message: "Conversation fetched successfully",
@@ -35,23 +35,13 @@ exports.sendMessage = async (req, res) => {
              return res.status(400).json({ message: "Message text is required" });
         }
 
+        // We assume token implies current user exists. Skip finding current user to save DB ms.
         if (!mongoose.Types.ObjectId.isValid(targetUserId)) {
             return res.status(400).json({ message: "Invalid target user id" });
         }
 
-        if (currentUserId === targetUserId) {
-            return res.status(400).json({ message: "You cannot message yourself" });
-        }
-
-        // Optional: Check if users are following each other
-        const currentUser = await userModel.findById(currentUserId);
-        const targetUser = await userModel.findById(targetUserId);
-
-        if (!currentUser) return res.status(404).json({ message: "Current user not found" });
-        if (!targetUser) return res.status(404).json({ message: "User not found" });
-
-        // Following check securely removed to ease testing and basic messaging.
-        // Users can now freely send messages to anyone in the system.
+        const targetExists = await userModel.exists({ _id: targetUserId });
+        if (!targetExists) return res.status(404).json({ message: "User not found" });
 
         const newMessage = await messageModel.create({
             sender: currentUserId,
@@ -65,22 +55,18 @@ exports.sendMessage = async (req, res) => {
             getIo().to(receiverSocketId).emit('newMessage', newMessage);
         }
 
-        // Notification logic (usually you don't send individual notifs for every text, but just as requested in prompt)
-        try {
-            const notification = await Notification.create({
-                recipient: targetUserId,
-                sender: currentUserId,
-                type: 'message',
-                message: text.substring(0, 30) // short snippet
-            });
+        // Run notification creation in the background so it doesn't block the API response
+        Notification.create({
+            recipient: targetUserId,
+            sender: currentUserId,
+            type: 'message',
+            message: text.substring(0, 30) // short snippet
+        }).then(async (notification) => {
             if (receiverSocketId) {
                 const populatedNotif = await notification.populate('sender', 'username profilePic');
                 getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
             }
-        } catch (notificationError) {
-            // Message delivery should not fail if notification creation/emission fails.
-            console.error('Notification creation failed for message:', notificationError.message);
-        }
+        }).catch(err => console.error('Notification failed:', err));
 
         return res.status(201).json({
             message: "Message sent",

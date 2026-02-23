@@ -231,7 +231,7 @@ exports.getConnections = async (req, res) => {
         // 2. Get Users from Message History
         const messages = await messageModel.find({
             $or: [{ sender: userId }, { receiver: userId }]
-        }).select('sender receiver -_id');
+        }).select('sender receiver -_id').lean();
 
         const interactedUserIds = new Set();
         messages.forEach(msg => {
