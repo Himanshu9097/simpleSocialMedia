@@ -53,16 +53,33 @@ export const SocketProvider = ({ children }) => {
 
     useEffect(() => {
         if (socket) {
+            // Listen for real-time notifications (likes, follows, comments)
             socket.on("newNotification", (notif) => {
                 setNotifications(prev => [notif, ...prev]);
                 if (notif.type !== 'message') {
                     setUnreadCount(prev => prev + 1);
                 } else {
-                    setUnreadMessagesFrom(prev => new Set(prev).add(notif.sender._id));
+                    // Use sender._id if object, or sender if plain string
+                    const senderId = notif.sender?._id || notif.sender;
+                    if (senderId) {
+                        setUnreadMessagesFrom(prev => new Set(prev).add(senderId.toString()));
+                    }
+                }
+            });
+
+            // Also listen to the newMessage event directly for the unread dot
+            // (fires when you receive a message while NOT on the messages page)
+            socket.on("newMessage", (message) => {
+                const currentPath = window.location.pathname;
+                if (!currentPath.includes('/messages')) {
+                    setUnreadMessagesFrom(prev => new Set(prev).add(message.sender.toString()));
                 }
             });
         }
-        return () => socket?.off("newNotification");
+        return () => {
+            socket?.off("newNotification");
+            socket?.off("newMessage");
+        };
     }, [socket]);
 
     const markAsRead = async () => {
