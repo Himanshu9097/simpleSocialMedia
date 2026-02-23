@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    container_name: socialmedia_backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./Backend/.env # Ensure your database and JWT secrets are here
+    environment:
+      - PORT=3000
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend/my-react-app
+      dockerfile: Dockerfile
+    container_name: socialmedia_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
