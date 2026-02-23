@@ -7,6 +7,7 @@ import './Navbar.css';
 const Navbar = () => {
     const { notifications, unreadCount, markAsRead, unreadMessagesFrom } = useSocket();
     const [showNotifs, setShowNotifs] = useState(false);
+    const currentUser = JSON.parse(localStorage.getItem('user'));
 
     const handleLogout = () => {
         localStorage.removeItem('token');
@@ -115,6 +116,18 @@ const Navbar = () => {
             </ul>
 
             <div className="nav-bottom">
+                {currentUser && (
+                    <NavLink to="/profile/me" className="nav-user-profile">
+                        <div className="nav-user-avatar">
+                            {currentUser.profilePic ? (
+                                <img src={currentUser.profilePic} alt={currentUser.username} />
+                            ) : (
+                                <div className="avatar-placeholder">{currentUser.username?.[0]?.toUpperCase()}</div>
+                            )}
+                        </div>
+                        <span className="nav-label nav-user-name">{currentUser.username}</span>
+                    </NavLink>
+                )}
                 <button className="nav-item btn-logout" onClick={handleLogout}>
                     <LogOut size={24} />
                     <span className="nav-label">Logout</span>
