@@ -34,7 +34,7 @@ const Auth = () => {
     return (
         <div className="auth-container">
             <div className="auth-card glass-panel animate-fade-in">
-                <h1 className="logo-text text-center mb-6">Pulse</h1>
+                <h1 className="logo-text text-center mb-6">{isLogin ? 'Login' : 'Sign Up'}</h1>
                 <h2 className="heading-2 mb-4">{isLogin ? 'Welcome Back' : 'Join Us'}</h2>
 
                 {error && <div className="error-message">{error}</div>}

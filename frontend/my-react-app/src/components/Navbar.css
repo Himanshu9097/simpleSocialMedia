@@ -107,7 +107,8 @@
 
   .nav-item {
     justify-content: center;
-    padding: 1rem;
+    padding: 0.6rem;
+    width: auto;
     border-radius: var(--radius-full);
   }
 
