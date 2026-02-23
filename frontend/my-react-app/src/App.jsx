@@ -17,7 +17,7 @@ const ProtectedRoute = ({ children }) => {
   if (!token) {
     return <Navigate to="/auth" replace />;
   }
-  return <SocketProvider>{children}</SocketProvider>;
+  return children;
 };
 
 const PublicRoute = ({ children }) => {
@@ -30,38 +30,40 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <Router>
-      <Suspense fallback={<div className="loader-container"><div className="spinner"></div></div>}>
-        <Routes>
-          <Route
-            path="/auth"
-            element={
-              <PublicRoute>
-                <Auth />
-              </PublicRoute>
-            }
-          />
+    <SocketProvider>
+      <Router>
+        <Suspense fallback={<div className="loader-container"><div className="spinner"></div></div>}>
+          <Routes>
+            <Route
+              path="/auth"
+              element={
+                <PublicRoute>
+                  <Auth />
+                </PublicRoute>
+              }
+            />
 
-          {/* Protected Routes */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<Navigate to="/feed" replace />} />
-            <Route path="feed" element={<Feed />} />
-            <Route path="explore" element={<Explore />} />
-            <Route path="search" element={<Search />} />
-            <Route path="create-post" element={<CreatePost />} />
-            <Route path="messages" element={<Messages />} />
-            <Route path="profile/:username" element={<Profile />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </Router>
+            {/* Protected Routes */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to="/feed" replace />} />
+              <Route path="feed" element={<Feed />} />
+              <Route path="explore" element={<Explore />} />
+              <Route path="search" element={<Search />} />
+              <Route path="create-post" element={<CreatePost />} />
+              <Route path="messages" element={<Messages />} />
+              <Route path="profile/:username" element={<Profile />} />
+            </Route>
+          </Routes>
+        </Suspense>
+      </Router>
+    </SocketProvider>
   );
 }
 
