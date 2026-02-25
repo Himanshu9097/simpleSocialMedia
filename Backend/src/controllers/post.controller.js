@@ -71,17 +71,19 @@ exports.toggleLike = async (req, res) => {
                  post.likes.push(userId);
              }
              if (post.author.toString() !== userId) {
-                 const notification = await Notification.create({
+                 // Fire notification in background — do not block response
+                 Notification.create({
                      recipient: post.author,
                      sender: userId,
                      type: 'like',
                      post: postId
-                 });
-                 const populatedNotif = await notification.populate('sender', 'username profilePic');
-                 const receiverSocketId = getReceiverSocketId(post.author.toString());
-                 if (receiverSocketId) {
-                     getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
-                 }
+                 }).then(async (notification) => {
+                     const populatedNotif = await notification.populate('sender', 'username profilePic');
+                     const receiverSocketId = getReceiverSocketId(post.author.toString());
+                     if (receiverSocketId) {
+                         getIo().to(receiverSocketId).emit('newNotification', populatedNotif);
+                     }
+                 }).catch(err => console.error('Like notification error:', err));
              }
         }
 

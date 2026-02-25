@@ -7,7 +7,9 @@ const PostCard = ({ post }) => {
     const user = JSON.parse(localStorage.getItem('user')) || {};
     const initialLikes = post.likes || [];
     const [likesCount, setLikesCount] = useState(initialLikes.length);
-    const [hasLiked, setHasLiked] = useState(initialLikes.includes(user?.id));
+    const [hasLiked, setHasLiked] = useState(
+        initialLikes.some(id => (id?._id || id)?.toString() === user?.id)
+    );
     const [hasSaved, setHasSaved] = useState(user?.savedPosts?.includes(post._id) || false);
     const [comments, setComments] = useState(post.comments || []);
     const [commentText, setCommentText] = useState('');
